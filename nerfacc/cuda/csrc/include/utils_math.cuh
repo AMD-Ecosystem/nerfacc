@@ -746,7 +746,7 @@ inline __host__ __device__ void operator-=(uint4 &a, uint b)
 ////////////////////////////////////////////////////////////////////////////////
 // multiply
 ////////////////////////////////////////////////////////////////////////////////
-
+#ifndef USE_ROCM
 inline __host__ __device__ float2 operator*(float2 a, float2 b)
 {
     return make_float2(a.x * b.x, a.y * b.y);
@@ -971,11 +971,11 @@ inline __host__ __device__ void operator*=(uint4 &a, uint b)
     a.z *= b;
     a.w *= b;
 }
-
+#endif
 ////////////////////////////////////////////////////////////////////////////////
 // divide
 ////////////////////////////////////////////////////////////////////////////////
-
+#ifndef USE_ROCM
 inline __host__ __device__ float2 operator/(float2 a, float2 b)
 {
     return make_float2(a.x / b.x, a.y / b.y);
@@ -1050,6 +1050,7 @@ inline __host__ __device__ float4 operator/(float b, float4 a)
 {
     return make_float4(b / a.x, b / a.y, b / a.z, b / a.w);
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // min
