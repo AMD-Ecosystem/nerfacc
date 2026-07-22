@@ -69,7 +69,22 @@ def get_extensions():
             extra_compile_args["cxx"] += ["-arch", "arm64"]
             extra_link_args += ["-arch", "arm64"]
 
-        hipcc_flags = ["-O3", "-D__HIP_PLATFORM_AMD__", "-DUSE_ROCM" , "--offload-arch=gfx942"]
+        # Resolve target GPU arch(s). Priority: PYTORCH_ROCM_ARCH env var ->
+        # the arch list from the installed torch build -> gfx942 fallback.
+        rocm_arch = os.getenv("PYTORCH_ROCM_ARCH", "")
+        if rocm_arch:
+            archs = [a.strip() for a in rocm_arch.replace(",", ";").split(";") if a.strip()]
+        else:
+            try:
+                archs = [a for a in torch.cuda.get_arch_list() if a.startswith("gfx")]
+            except Exception:
+                archs = []
+        if not archs:
+            archs = ["gfx942"]
+        print(f"Building HIP kernels for arch(s): {archs}")
+
+        hipcc_flags = ["-O3", "-D__HIP_PLATFORM_AMD__", "-DUSE_ROCM"]
+        hipcc_flags += [f"--offload-arch={a}" for a in archs]
 
         if torch.version.hip:
             # USE_ROCM was added to later versions of PyTorch.
