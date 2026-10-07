@@ -160,7 +160,7 @@ include_package_data = True
 #     include_package_data = False
 
 setup(
-    name="amd_nerfacc",
+    name="nerfacc",
     version=__version__,
     description="A General NeRF Acceleration Toolbox",
     author="Ruilongi, Advanced Micro Devices Inc.",
