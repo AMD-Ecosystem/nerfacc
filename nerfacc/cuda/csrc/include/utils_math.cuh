@@ -1143,10 +1143,17 @@ inline __host__ __device__ uint4 max(uint4 a, uint4 b)
 // - linear interpolation between a and b, based on value t in [0, 1] range
 ////////////////////////////////////////////////////////////////////////////////
 
+// NOTE: C++17's std::lerp(float, float, float) is pulled into the global
+// namespace by libstdc++ (<cmath> does `using std::lerp;`) on GCC >= 14, which
+// collides with this overload ("declaration conflicts with target of using
+// declaration already in scope"). Only define our own scalar lerp when
+// std::lerp is not available. The vector overloads below never conflict.
+#if !defined(__cpp_lib_interpolate)
 inline __device__ __host__ float lerp(float a, float b, float t)
 {
     return a + t * (b - a);
 }
+#endif
 inline __device__ __host__ float2 lerp(float2 a, float2 b, float t)
 {
     return a + t * (b - a);
